@@ -1,7 +1,7 @@
 import cv2
 
 # Initialize webcam
-cap = cv2.VideoCapture('http://192.168.1.155:4747/video')
+cap = cv2.VideoCapture(0)
 
 # Capture an image when space key is pressed
 while True:
