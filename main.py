@@ -17,6 +17,14 @@ cv2.destroyAllWindows()
 
 # open the captured image
 img = cv2.imread("captured_image.jpg")
-cv2.imshow("Captured Image", img)
+
+# Convert image to grayscale
+gray_image = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+# Display original and grayscale images
+cv2.imshow('Original Image', frame)
+cv2.imshow('Grayscale Image', gray_image)
+
+# cv2.imshow("Captured Image", img)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
