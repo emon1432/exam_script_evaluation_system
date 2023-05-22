@@ -1,5 +1,0 @@
-build
-data
-doc
-htr_pipeline
-scripts
