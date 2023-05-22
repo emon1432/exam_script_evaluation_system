@@ -1,33 +1,29 @@
 import cv2
-import pytesseract
+import matplotlib.pyplot as plt
+from path import Path
 
-# Initialize webcam
-cap = cv2.VideoCapture(0)
+from htr_pipeline import read_page, DetectorConfig
 
-# Capture an image when space key is pressed
-while True:
-    ret, frame = cap.read()
-    cv2.imshow("Image Capture", frame)
-    if cv2.waitKey(1) == ord(' '):
-        cv2.imwrite("captured_image1.jpg", frame)
-        break
+for img_filename in Path('data').files('*.png'):
+    print(f'Reading file {img_filename}')
 
-# Release webcam and close all windows
-cap.release()
-cv2.destroyAllWindows()
+    # read text
+    img = cv2.imread(img_filename, cv2.IMREAD_GRAYSCALE)
+    read_lines = read_page(img, DetectorConfig(height=1000))
 
-# Read the image
-img = cv2.imread('captured_image1.jpg')
+    # output text
+    for read_line in read_lines:
+        print(' '.join(read_word.text for read_word in read_line))
 
-# Convert image to grayscale
-gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    # plot image with detections and texts as overlay
+    plt.figure(img_filename)
+    plt.imshow(img, cmap='gray')
+    for i, read_line in enumerate(read_lines):
+        for read_word in read_line:
+            bbox = read_word.bbox
+            xs = [bbox.x, bbox.x, bbox.x + bbox.w, bbox.x + bbox.w, bbox.x]
+            ys = [bbox.y, bbox.y + bbox.h, bbox.y + bbox.h, bbox.y, bbox.y]
+            plt.plot(xs, ys, c='r' if i % 2 else 'b')
+            plt.text(bbox.x, bbox.y, read_word.text)
 
-# Pre-process the image to remove noise and smooth it
-gray = cv2.medianBlur(gray, 3)
-gray = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
-
-# Perform OCR using Tesseract
-text = pytesseract.image_to_string(gray, lang='eng')
-
-# Print the extracted text
-print(text)
+plt.show()
