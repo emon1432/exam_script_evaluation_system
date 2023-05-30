@@ -1,62 +1,44 @@
-# Detect and Read Handwritten Words
+# Image-Based-Equation-Solver
+A PyQt5 desktop application that solves the equation contained in an image.
 
-This is a **handwritten text recognition (HTR) pipeline** that operates on **scanned pages** and applies the following
-operations:
+## Environment
+Install and activate the environment using conda
 
-* Detect words
-* Read words
+`conda env create -f environment.yaml`
 
-![example](./doc/example.png)
+`conda activate tf`
 
-The pipeline combines these two models:
+## Data
 
-* [Scale space based word detector](https://github.com/githubharald/WordDetector)
-* [CRNN based text reader](https://github.com/githubharald/SimpleHTR)
+The symbol recognition model is trained using the Kaggle handwritten symbol dataset https://www.kaggle.com/datasets/xainano/handwrittenmathsymbols.
 
-**Don't expect too much as these are both very rudimentary models.**
+Add a folder called "Data" in the base directory. Inside this folder add '+', '-', 'times', '=', 'X', 'Y' and 0-9 folders. Make sure that each symbol folder contains exactly 6000 images. You may need to use `expand.py` to augment certain datasets.
 
-## Installation
+Run `solver_data.py` to create the training dataset.
 
-* Go to the root level of the repository
-* Execute `pip install .`
+## Training
 
-## Usage
+Run `solver_training.py` to train the model.
 
-### Run demo
+## Start
 
-* Additionally install matplotlib for plotting: `pip install matplotlib`
-* Go to `scripts/`
-* Run `python demo.py`
-* The output should look like the plot shown above
+Start the application.
 
-### Use Python package
+ `python main.py`
+ 
+ ## Screenshots
+ 
+![image](https://user-images.githubusercontent.com/120903301/227707803-eeb60dc6-2264-4f8e-8c2a-970e7ef167ac.png)
 
-Import the function `read_page` to detect and read text.
+![image](https://user-images.githubusercontent.com/120903301/227707902-e83c049c-016f-4ed3-a8e6-e2291450a0e6.png)
 
-````python
-import cv2
-from htr_pipeline import read_page, DetectorConfig
+![image](https://user-images.githubusercontent.com/120903301/227708088-c8d769c4-8d9c-4d42-8779-d7d4d760af93.png)
 
-# read image
-img = cv2.imread('data/r06-137.png', cv2.IMREAD_GRAYSCALE)
+![image](https://user-images.githubusercontent.com/120903301/227708253-e70ba2a2-9b0b-491d-a25e-a2f3bf2a1dd7.png)
 
-# detect and read text
-read_lines = read_page(img, DetectorConfig(height=1000))
+![image](https://user-images.githubusercontent.com/120903301/227708340-9dc04635-438b-455f-a993-448ff656f93c.png)
 
-# output text
-for read_line in read_lines:
-    print(' '.join(read_word.text for read_word in read_line))
-````
+![image](https://user-images.githubusercontent.com/120903301/227708390-7460b663-4a72-42a9-a47f-3fe75de468ac.png)
 
-If needed, the detection can be configured by instantiating and passing these data-classes:
-
-* `DetectorConfig`
-* `LineClusteringConfig`
-
-For more details please have a look at the docstrings of `detect` and `sort_multiline`
-in `htr_pipeline/word_detector/__init__.py`. The most important settings are:
-
-* `height` in `DetectorConfig`: the word detector is not scale invariant, the text height should be 25-50px when using
-  the default parameters, which is achieved by resizing the image to the specified height
-* `min_words_per_line` in `LineClusteringConfig`: lines which have fewer words than specified are discarded, the default
-  setting is 2, which means that lines with a single word will not be read by default
+### History Database
+![image](https://user-images.githubusercontent.com/120903301/227708468-e104823d-64c0-4907-b85a-5b5799207060.png)
