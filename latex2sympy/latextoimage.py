@@ -10,7 +10,7 @@ def latex_to_image(latex_str, output_filename):
 
 def main():
     # Example LaTeX expression
-    latex_expression = r"\exp\left[\int d^{4}x g\phi\bar{\psi}\psi\right]\,=\,\sum_{n=0}^{\infty}{\frac{g^{n}}{n!}}\left(\int d^{4}x\phi\bar{\psi}\psi\right)^{n}"
+    latex_expression = r"S=\int_x\left\{\frac{1}{2} \sum_a \partial^\mu \chi_a \partial_\mu \chi_a+V(\rho)\right\}"
 
     # Output filename for the image (PNG format)
     output_filename = "latex_image.png"

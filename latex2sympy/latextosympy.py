@@ -1,12 +1,16 @@
-from sympy.parsing.latex import parse_latex
-from sympy import latex
-from process_latex import process_sympy
+from latex2sympy2 import latex2sympy, latex2latex
+from sympy import *
 
+def solve(sympy_expr):
+    x = symbols('x')
+    return sympy.solve(sympy_expr, x)
 
-# sample latex string
-latex_string = r"\frac{1}{2} \int_{-\infty}^{\infty} x^{2} \mathrm{d} x"
-
-# convert latex string to sympy expression
-sympy_expr = process_sympy(latex_string)
-
+tex = r"\frac{d}{dx}(x^{2}+x)"
+# sympy_expr = latex2sympy(tex)
+# print(sympy_expr)
+# print(latex2latex(tex))
+#solve
+sympy_expr = latex2sympy(r"\frac{d}{dx}(x^{2}+x)")
 print(sympy_expr)
+print(latex2latex(r"\frac{d}{dx}(x^{2}+x)"))
+print(solve(sympy_expr))

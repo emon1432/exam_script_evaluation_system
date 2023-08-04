@@ -56,10 +56,10 @@ def output(result, variable):
     print("The answer of " + variable + " is: " + str(result[0]))
     print("\n")
 
+
 def single_output(result):
     print("The answer is: " + result)
     print("\n")
-
 
 
 print("\nPlease enter the expression you want to solve. (e.g. 5x-10)\n")
@@ -87,5 +87,4 @@ if find_variable:
 
     output = output(final_solve, find_variable)
 else:
-    
     single_output = single_output(make_string)
