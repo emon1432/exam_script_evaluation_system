@@ -10,7 +10,7 @@ def latex_to_image(latex_str, output_filename):
     plt.close()
 
 
-img = Image.open("app\images\correct.png")
+img = Image.open("app/images/correct.png")
 model = LatexOCR()
 
 

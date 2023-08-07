@@ -1,7 +1,6 @@
 # import libraries
 import cv2
 import requests
-from sympy import *
 from sympy.printing.preview import preview
 from PIL import Image
 from pix2tex.cli import LatexOCR
@@ -43,31 +42,32 @@ def image_to_latex(image_path):
 
 def split_into_equations(s):
     # print(s)
-    # Remove unnecessary spaces and line breaks
-    s = s.replace(" ", "").replace("\n", "")
+    # replace ' ' with ''   
+    s = s.replace(' ','')
 
     # Pattern to identify the starting and ending points of each equation
     pattern = r"\\begin\{array\}\{[a-zA-Z]\}(.*?)\\end\{array\}"
 
     # Search for the pattern in the string
     matches = re.findall(pattern, s)
+    
+    # Remove leading and trailing curly braces and split equations based on '\\'
+    equations = [match.strip("{}").split("\\\\") for match in matches]
 
-    # Extract the equations from the matches and split them based on '\\\\' separator
-    equations = [match.split("\\\\") for match in matches]
+    # Flatten the list of equations and remove leading/trailing whitespace
+    equations = [eq.strip() for sublist in equations for eq in sublist]
 
-    # Flatten the list of equations
-    equations = [eq for sublist in equations for eq in sublist]
-
-    # Remove any leading or trailing curly braces
-    equations = [eq.replace("{", "").replace("}", "").strip() for eq in equations]
-
+    # Remove first '{' or last '}'  
+    equations = [eq[1:] if eq[0] == '{' else eq for eq in equations]
+    equations = [eq[:-1] if eq[-1] == '}' else eq for eq in equations]
+    
     return equations
 
 
 def solve_equations(latex_equations):
     sympy_equations = []
     for latex_equation in latex_equations:
-        sympy_equation = latex2sympy(latex_equation)
+        sympy_equation = latex2latex(latex_equation)
         sympy_equations.append(sympy_equation)
     return sympy_equations
 
