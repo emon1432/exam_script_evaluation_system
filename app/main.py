@@ -42,25 +42,24 @@ def image_to_latex(image_path):
 
 def split_into_equations(s):
     # print(s)
-    # replace ' ' with ''   
-    s = s.replace(' ','')
+    # Remove unnecessary spaces and line breaks
+    s = s.replace(" ", "").replace("\n", "")
 
     # Pattern to identify the starting and ending points of each equation
     pattern = r"\\begin\{array\}\{[a-zA-Z]\}(.*?)\\end\{array\}"
 
     # Search for the pattern in the string
     matches = re.findall(pattern, s)
-    
-    # Remove leading and trailing curly braces and split equations based on '\\'
-    equations = [match.strip("{}").split("\\\\") for match in matches]
 
-    # Flatten the list of equations and remove leading/trailing whitespace
-    equations = [eq.strip() for sublist in equations for eq in sublist]
+    # Extract the equations from the matches and split them based on '\\\\' separator
+    equations = [match.split("\\\\") for match in matches]
 
-    # Remove first '{' or last '}'  
-    equations = [eq[1:] if eq[0] == '{' else eq for eq in equations]
-    equations = [eq[:-1] if eq[-1] == '}' else eq for eq in equations]
-    
+    # Flatten the list of equations
+    equations = [eq for sublist in equations for eq in sublist]
+
+    # Remove any leading or trailing curly braces
+    equations = [eq.replace("{", "").replace("}", "").strip() for eq in equations]
+
     return equations
 
 
@@ -103,9 +102,9 @@ if __name__ == "__main__":
     # cv2.destroyAllWindows()
 
     # step 3: image to latex
-    # image_path = "app\images\correct.png"
-    image_path = "app\images\wrong1.png"
-    # image_path = "app\images\wrong2.png"
+    image_path = "app\images\demo1.png"     # no mistake
+    # image_path = "app\images\demo2.png"   # mistake in line 2
+    # image_path = "app\images\demo3.png"   # mistake in line 2 and 3
     latex_str = image_to_latex(image_path)
 
     # step 4: split into equations

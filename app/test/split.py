@@ -3,8 +3,7 @@ from latex2sympy2 import latex2sympy, latex2latex
 
 
 def split_into_equations(s):
-    #s = r"\left.\begin{array}{c}{\int _{1}^{2}\dfrac{3}{2x^{2}+x-1}dx}\\{\int _{1}^{2}\dfrac{3}{( 2x-1)(x+1)}dx}\\{\int _{1}^{2}\dfrac{2}{(2x-1)}+\dfrac{1}{(x+1)}dx}\\{\dfrac{(2\ln3)}{2}-\dfrac{(2\ln1)}{2}}\\{\ln(9/2)}\end{array}\right."
-
+    s = r"\left.\begin{array}{c}{\int_{1}^{2}\dfrac{3}{2x^{2}+x-1}dx}\\{\int _{1}^{2}\dfrac{3}{( 2x-1)(x+1)}dx}\\{\int _{1}^{2}\dfrac{2}{(2x-1)}+\dfrac{1}{(x+1)}dx}\\{\dfrac{(2\ln3)}{2}-\dfrac{(2\ln1)}{2}}\\{\ln(9/2)}\end{array}\right."
     #result = ['\int_{1}^{2}\dfrac{3}{2x^{2}+x-1}dx','\int_{1}^{2}\dfrac{3}{(2x-1)(x+1)}dx','\int_{1}^{2}\dfrac{2}{(2x-1)}+\dfrac{1}{(x+1)}dx','\dfrac{(2\ln3)}{2}-\dfrac{(2\ln1)}{2}','\ln(9/2)']
 
     # replace ' ' with ''   
