@@ -1,19 +1,21 @@
-from pix2tex.cli import LatexOCR
-import matplotlib.pyplot as plt
 from PIL import Image
+from pix2tex.cli import LatexOCR
 
 
-def latex_to_image(latex_str, output_filename):
-    plt.text(0.5, 0.5, f"${latex_str}$", usetex=True, fontsize=18)
-    plt.axis("off")
-    plt.savefig(output_filename, format="png", bbox_inches="tight", pad_inches=0)
-    plt.close()
+# image to latex
+def image_to_latex(image_path):
+    img = Image.open(image_path)
+    model = LatexOCR()
+    extracted_text = model(img)
+    extracted_text = r"\left." + extracted_text + r"\right."
+    return extracted_text
 
 
-img = Image.open("app/images/Capture3.PNG")
-model = LatexOCR()
+# image path
+image_path = "app/test/images/test7.PNG"
 
+# image to latex
+latex_str = image_to_latex(image_path)
 
-extracted_text = model(img)
-
-print(extracted_text)
+# print latex
+print(latex_str)
