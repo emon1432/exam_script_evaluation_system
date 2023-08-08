@@ -2,7 +2,7 @@
 import cv2
 import requests
 from sympy.printing.preview import preview
-from PIL import Image
+from PIL import Image, ImageFont, ImageDraw
 from pix2tex.cli import LatexOCR
 import base64
 import numpy as np
@@ -91,6 +91,37 @@ def show_the_mistake(mistake_line_numbers, equations):
     return
 
 
+def output(splitted_equations, mistake_line_numbers, marks):
+    # create a new image
+    img = Image.new("RGB", (1000, 1000), color=(255, 255, 255))
+    img.save("app/result/output.png")
+
+    # draw the equations
+    font = ImageFont.truetype("arial.ttf", 30)
+    d = ImageDraw.Draw(img)
+    # draw in middle
+    for i in range(len(splitted_equations)):
+        d.text((100, 100 + 50 * i), splitted_equations[i], fill=(0, 0, 0), font=font)
+
+    # mark the mistake
+    for i in mistake_line_numbers:
+        # d.text((10, (i - 1) * 20), splitted_equations[i - 1], fill=(255, 0, 0), font=font)
+        d.text(
+            (100, 100 + 50 * (i - 1)),
+            f"{splitted_equations[i - 1]}",
+            fill=(255, 0, 0),
+            font=font,
+        )
+
+    # draw the marks green color \n \n
+    d.text((100, 100 + 60 * len(splitted_equations)), f"Marks: {marks}", fill=(0, 255, 0), font=font)
+
+
+    # save the image and preview it
+    img.save("app/result/output.png")
+    img.show()
+
+
 # main function
 if __name__ == "__main__":
     # step 1: open camera
@@ -105,7 +136,9 @@ if __name__ == "__main__":
     image_path = "app\images\demo1.png"     # no mistake
     # image_path = "app\images\demo2.png"   # mistake in line 2
     # image_path = "app\images\demo3.png"   # mistake in line 2 and 3
+
     latex_str = image_to_latex(image_path)
+    # latex_str = r"\left.\begin{array}{c}{x^{2}+5x+6=0}\\{x^{2}+2x+3x-6=0}\\{x(x+2)+3(x+2)=0}\\{(x+2)(x-3)=0}\end{array}\right."
 
     # step 4: split into equations
     splitted_equations = split_into_equations(latex_str)
@@ -117,7 +150,17 @@ if __name__ == "__main__":
     mistake_line_numbers = check_equations(solved_equations)
 
     # step 7: show the mistake
+    marks = ''
     if len(mistake_line_numbers) == 0:
-        print("No mistake! Good job!")
+        print("\nNo mistake! Good job!")
+        print("You got 10 out of 10!\n")
+        marks = '10/10'
     else:
         show_the_mistake(mistake_line_numbers, splitted_equations)
+        print("\n Total marks is 10. Total mistake is", len(mistake_line_numbers))
+        mark = input("How many marks do you want to give? = ")
+        marks = str(int(mark)) + "/10"
+
+
+    # step 8: create a new image with the splitted equations and mark the mistake and show the marks
+    output(splitted_equations, mistake_line_numbers, marks)
