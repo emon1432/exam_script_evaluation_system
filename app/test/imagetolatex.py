@@ -12,7 +12,7 @@ def image_to_latex(image_path):
 
 
 # image path
-image_path = "app/test/images/test7.PNG"
+image_path = "app/images2/demo1.png"
 
 # image to latex
 latex_str = image_to_latex(image_path)

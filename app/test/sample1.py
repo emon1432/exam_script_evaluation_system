@@ -9,7 +9,6 @@ import numpy as np
 from latex2sympy2 import latex2sympy, latex2latex
 import re
 import matplotlib.pyplot as plt
-import os
 
 
 def open_camera():
@@ -41,33 +40,6 @@ def image_to_latex(image_path):
     return extracted_text
 
 
-def image_to_latex2(image_path):
-    # command = "mpx convert " + image_path + " app/gen/output.tex"
-    # os.system(command)
-
-    # file_path = "app/gen/output.tex.zip"
-    # rename the file
-    # os.rename(file_path, "app/gen/output.tex")
-
-    # read the file
-    with open("app/gen/output2.tex", "r") as file:
-        data = file.read()
-
-    # remove ' ' from the string
-    data = data.replace(" ", "")
-
-    # remove first '\[' and last '\]' if they exist
-    if data.startswith("\["):
-        data = data[2:]
-    if data.endswith("\]"):
-        data = data[:-2]
-
-    # delete the file
-    # os.remove("app/gen/output.tex")
-
-    return data
-
-
 def split_into_equations(s):
     # print(s)
     # Remove unnecessary spaces and line breaks
@@ -86,9 +58,8 @@ def split_into_equations(s):
     equations = [eq for sublist in equations for eq in sublist]
 
     # Remove any leading or trailing curly braces
-    # equations = [eq.replace("{", "").replace("}", "").strip() for eq in equations]
+    equations = [eq.replace("{", "").replace("}", "").strip() for eq in equations]
 
-    # print(equations)
     return equations
 
 
@@ -120,41 +91,42 @@ def show_the_mistake(mistake_line_numbers, equations):
     return
 
 
-def output(splitted_equations, mistake_line_numbers, marks):
-    # create a new image
-    img = Image.new("RGB", (1000, 1000), color=(255, 255, 255))
-    img.save("app/result/output.png")
+def output(
+    latex_str,
+    splitted_equations,
+    mistake_line_numbers,
+    marks,
+    output_filename="app/result/output.png",
+):
+    fig, ax = plt.subplots(figsize=(6, 4))  # Adjust the figsize as needed
 
-    # draw the equations
-    font = ImageFont.truetype("arial.ttf", 30)
-    d = ImageDraw.Draw(img)
-    # draw in middle
-    for i in range(len(splitted_equations)):
-        d.text(
-            (100, 100 + 50 * i), f"{splitted_equations[i]}", fill=(0, 0, 0), font=font
+    for i, equation in enumerate(splitted_equations):
+        if i + 1 in mistake_line_numbers:
+            color = "red"
+        else:
+            color = "black"
+
+        ax.text(
+            0.5,
+            0.9 - i * 0.1,  # Adjust the vertical position for each line
+            f"${equation}$",
+            usetex=True,
+            fontsize=18,
+            color=color,
         )
 
-    # mark the mistake
-    for i in mistake_line_numbers:
-        # d.text((10, (i - 1) * 20), splitted_equations[i - 1], fill=(255, 0, 0), font=font)
-        d.text(
-            (100, 100 + 50 * (i - 1)),
-            f"{splitted_equations[i - 1]}",
-            fill=(255, 0, 0),
-            font=font,
-        )
-
-    # draw the marks green color \n \n
-    d.text(
-        (100, 100 + 60 * len(splitted_equations)),
-        f"Marks: {marks}",
-        fill=(0, 255, 0),
-        font=font,
+    ax.text(
+        0.5,
+        0.9 - (i + 2) * 0.1,
+        f"Marks = {marks}",
+        usetex=True,
+        fontsize=20,
+        color="green",
     )
-
-    # save the image and preview it
-    img.save("app/result/output.png")
-    img.show()
+    ax.axis("off")
+    plt.tight_layout()  # Ensure that the equations do not overlap
+    plt.savefig(output_filename, format="png", bbox_inches="tight", pad_inches=0)
+    plt.show()
 
 
 # main function
@@ -168,21 +140,19 @@ if __name__ == "__main__":
     # cv2.destroyAllWindows()
 
     # step 3: image to latex
-    # image_path = "app\images\demo1.png"  # no mistake
-    image_path = "app\images\demo2.png"   # mistake in line 2
-    # image_path = "app\images\demo3.png"   # mistake in line 2 and 3
+    image_path = "app\images2\demo1.png"  # no mistake
+    # image_path = "app\images2\demo2.png"   # mistake in line 2
+    image_path = "app\images2\demo3.png"  # mistake in line 2 and 3
 
-    # latex_str = image_to_latex(image_path)
-    latex_str = image_to_latex2(image_path)
-    # print(latex_str)
-    # latex_str = r"\left.\begin{array}{c}{(x-2)^2+1=2x-3}\\{(x^2+4-4x)+1=2x-3}\\{x^2+5-4x-2x+3=0}\\{x^2-6x+8=0}\end{array}\right."
+    latex_str = image_to_latex(image_path)
+    # latex_str = r"\left.\begin{array}{c}{x^{2}+5x+6=0}\\{x^{2}+2x+3x-6=0}\\{x(x+2)+3(x+2)=0}\\{(x+2)(x-3)=0}\end{array}\right."
 
     # step 4: split into equations
     splitted_equations = split_into_equations(latex_str)
 
     # step 5: solve equations
     solved_equations = solve_equations(splitted_equations)
-    # print(solved_equations)
+
     # step 6: check equations
     mistake_line_numbers = check_equations(solved_equations)
 
@@ -199,4 +169,4 @@ if __name__ == "__main__":
         marks = str(int(mark)) + "/10"
 
     # step 8: create a new image with the splitted equations and mark the mistake and show the marks
-    output(splitted_equations, mistake_line_numbers, marks)
+    output(latex_str, splitted_equations, mistake_line_numbers, marks)

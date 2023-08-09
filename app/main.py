@@ -91,35 +91,41 @@ def show_the_mistake(mistake_line_numbers, equations):
     return
 
 
-def output(splitted_equations, mistake_line_numbers, marks):
-    # create a new image
-    img = Image.new("RGB", (1000, 1000), color=(255, 255, 255))
-    img.save("app/result/output.png")
+def output(
+    splitted_equations,
+    mistake_line_numbers,
+    marks,
+    output_filename="app/result/output.png",
+):
+    fig, ax = plt.subplots(figsize=(6, 4))  # Adjust the figsize as needed
 
-    # draw the equations
-    font = ImageFont.truetype("arial.ttf", 30)
-    d = ImageDraw.Draw(img)
-    # draw in middle
-    for i in range(len(splitted_equations)):
-        d.text((100, 100 + 50 * i), splitted_equations[i], fill=(0, 0, 0), font=font)
+    for i, equation in enumerate(splitted_equations):
+        if i + 1 in mistake_line_numbers:
+            color = "red"
+        else:
+            color = "black"
 
-    # mark the mistake
-    for i in mistake_line_numbers:
-        # d.text((10, (i - 1) * 20), splitted_equations[i - 1], fill=(255, 0, 0), font=font)
-        d.text(
-            (100, 100 + 50 * (i - 1)),
-            f"{splitted_equations[i - 1]}",
-            fill=(255, 0, 0),
-            font=font,
+        ax.text(
+            0.5,
+            0.9 - i * 0.1,  # Adjust the vertical position for each line
+            f"${equation}$",
+            usetex=True,
+            fontsize=18,
+            color=color,
         )
 
-    # draw the marks green color \n \n
-    d.text((100, 100 + 60 * len(splitted_equations)), f"Marks: {marks}", fill=(0, 255, 0), font=font)
-
-
-    # save the image and preview it
-    img.save("app/result/output.png")
-    img.show()
+    ax.text(
+        0.5,
+        0.9 - (i + 2) * 0.1,
+        f"Marks = {marks}",
+        usetex=True,
+        fontsize=20,
+        color="green",
+    )
+    ax.axis("off")
+    plt.tight_layout()  # Ensure that the equations do not overlap
+    plt.savefig(output_filename, format="png", bbox_inches="tight", pad_inches=0)
+    plt.show()
 
 
 # main function
@@ -133,8 +139,8 @@ if __name__ == "__main__":
     # cv2.destroyAllWindows()
 
     # step 3: image to latex
-    image_path = "app\images2\demo1.png"     # no mistake
-    # image_path = "app\images2\demo2.png"   # mistake in line 2
+    # image_path = "app\images2\demo1.png"  # no mistake
+    image_path = "app\images2\demo2.png"   # mistake in line 2
     # image_path = "app\images2\demo3.png"   # mistake in line 2 and 3
 
     latex_str = image_to_latex(image_path)
@@ -150,17 +156,16 @@ if __name__ == "__main__":
     mistake_line_numbers = check_equations(solved_equations)
 
     # step 7: show the mistake
-    marks = ''
+    marks = ""
     if len(mistake_line_numbers) == 0:
         print("\nNo mistake! Good job!")
         print("You got 10 out of 10!\n")
-        marks = '10/10'
+        marks = "10/10"
     else:
         show_the_mistake(mistake_line_numbers, splitted_equations)
         print("\n Total marks is 10. Total mistake is", len(mistake_line_numbers))
         mark = input("How many marks do you want to give? = ")
         marks = str(int(mark)) + "/10"
-
 
     # step 8: create a new image with the splitted equations and mark the mistake and show the marks
     output(splitted_equations, mistake_line_numbers, marks)
