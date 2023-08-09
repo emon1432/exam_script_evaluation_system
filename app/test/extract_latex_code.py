@@ -3,13 +3,14 @@ import zipfile
 
 # https://mathpix.com/docs/snip/mpx-cli
 
-file_path = 'app/generated/output.tex.zip'
+
+# file_path = 'app/generated/output2.tex.zip'
 
 # rename the file
-os.rename(file_path, 'app/generated/output.tex')
+# os.rename(file_path, 'app/generated/output2.tex')
 
 # read the file
-with open('app/generated/output.tex', 'r') as file:
+with open('app/generated/output2.tex', 'r') as file:
     data = file.read()
 
 print(data)

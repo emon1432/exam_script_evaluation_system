@@ -133,9 +133,9 @@ if __name__ == "__main__":
     # cv2.destroyAllWindows()
 
     # step 3: image to latex
-    image_path = "app\images\demo1.png"     # no mistake
-    # image_path = "app\images\demo2.png"   # mistake in line 2
-    # image_path = "app\images\demo3.png"   # mistake in line 2 and 3
+    image_path = "app\images2\demo1.png"     # no mistake
+    # image_path = "app\images2\demo2.png"   # mistake in line 2
+    # image_path = "app\images2\demo3.png"   # mistake in line 2 and 3
 
     latex_str = image_to_latex(image_path)
     # latex_str = r"\left.\begin{array}{c}{x^{2}+5x+6=0}\\{x^{2}+2x+3x-6=0}\\{x(x+2)+3(x+2)=0}\\{(x+2)(x-3)=0}\end{array}\right."

@@ -8,8 +8,8 @@ import base64
 import numpy as np
 from latex2sympy2 import latex2sympy, latex2latex
 import re
-import matplotlib.pyplot as plt
 import os
+import matplotlib.pyplot as plt
 
 
 def open_camera():
@@ -34,23 +34,29 @@ def open_camera():
 
 
 def image_to_latex(image_path):
-    img = Image.open(image_path)
-    model = LatexOCR()
-    extracted_text = model(img)
-    extracted_text = r"\left." + extracted_text + r"\right."
-    return extracted_text
+    # get the last file name in app/gen and set the new file name
+    files = os.listdir("app/gen")
+    new_file = ""
+    # if the file does not exist, set the new file name to extracted_latex_1
+    if len(files) == 0:
+        new_file = "extracted_latex_1"
+    else:
+        # get the last number in the file name and increase it by 1
+        last_file = files[-1]
+        last_number = int(last_file.split("_")[-1].split(".")[0])
+        new_file = "extracted_latex_" + str(last_number + 1)
 
+    # print("New file name:", new_file)
 
-def image_to_latex2(image_path):
-    # command = "mpx convert " + image_path + " app/gen/output.tex"
-    # os.system(command)
+    command = "mpx convert " + image_path + " app/gen/" + new_file + ".tex"
+    os.system(command)
 
-    # file_path = "app/gen/output.tex.zip"
+    file_path = "app/gen/" + new_file + ".tex.zip"
     # rename the file
-    # os.rename(file_path, "app/gen/output.tex")
+    os.rename(file_path, "app/gen/" + new_file + ".tex")
 
     # read the file
-    with open("app/gen/output2.tex", "r") as file:
+    with open("app/gen/" + new_file + ".tex", "r") as file:
         data = file.read()
 
     # remove ' ' from the string
@@ -63,7 +69,7 @@ def image_to_latex2(image_path):
         data = data[:-2]
 
     # delete the file
-    # os.remove("app/gen/output.tex")
+    # os.remove("app/gen/" + new_file + ".tex")
 
     return data
 
@@ -88,7 +94,6 @@ def split_into_equations(s):
     # Remove any leading or trailing curly braces
     # equations = [eq.replace("{", "").replace("}", "").strip() for eq in equations]
 
-    # print(equations)
     return equations
 
 
@@ -130,9 +135,7 @@ def output(splitted_equations, mistake_line_numbers, marks):
     d = ImageDraw.Draw(img)
     # draw in middle
     for i in range(len(splitted_equations)):
-        d.text(
-            (100, 100 + 50 * i), f"{splitted_equations[i]}", fill=(0, 0, 0), font=font
-        )
+        d.text((100, 100 + 50 * i), splitted_equations[i], fill=(0, 0, 0), font=font)
 
     # mark the mistake
     for i in mistake_line_numbers:
@@ -168,21 +171,22 @@ if __name__ == "__main__":
     # cv2.destroyAllWindows()
 
     # step 3: image to latex
-    # image_path = "app\images\demo1.png"  # no mistake
-    image_path = "app\images\demo2.png"   # mistake in line 2
-    # image_path = "app\images\demo3.png"   # mistake in line 2 and 3
+    # image_path = "app\images\demo1.png"
+    # image_path = "app\images\demo2.png"
+    # image_path = "app\images\demo3.png"
+    # image_path = "app\images\demo4.png"
+    image_path = "app\images\demo5.png"
+    # image_path = "app\images\demo6.png"
 
-    # latex_str = image_to_latex(image_path)
-    latex_str = image_to_latex2(image_path)
-    # print(latex_str)
-    # latex_str = r"\left.\begin{array}{c}{(x-2)^2+1=2x-3}\\{(x^2+4-4x)+1=2x-3}\\{x^2+5-4x-2x+3=0}\\{x^2-6x+8=0}\end{array}\right."
+    latex_str = image_to_latex(image_path)
+    # latex_str = r"\left.\begin{array}{c}{x^{2}+5x+6=0}\\{x^{2}+2x+3x-6=0}\\{x(x+2)+3(x+2)=0}\\{(x+2)(x-3)=0}\end{array}\right."
 
     # step 4: split into equations
     splitted_equations = split_into_equations(latex_str)
 
     # step 5: solve equations
     solved_equations = solve_equations(splitted_equations)
-    # print(solved_equations)
+
     # step 6: check equations
     mistake_line_numbers = check_equations(solved_equations)
 
