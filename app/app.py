@@ -15,22 +15,33 @@ import matplotlib.pyplot as plt
 def open_camera():
     # Initialize webcam
     # cap = cv2.VideoCapture(0)
-    cap = cv2.VideoCapture("http://192.168.1.100:4747/video")
+    cap = cv2.VideoCapture("http://192.168.1.102:4747/video")
 
     # Capture an image when space key is pressed
     while True:
         ret, frame = cap.read()
         cv2.imshow("Image Capture", frame)
-        if cv2.waitKey(1) == ord(" "):
-            cv2.imwrite("app/images/captured_image.png", frame)
+        if cv2.waitKey(1) & 0xFF == ord(" "):
+            # get the last file name in app/images and set the new file name
+            files = os.listdir("app/images")
+            new_file = ""
+            # if the file does not exist, set the new file name to extracted_latex_1
+            if len(files) == 0:
+                new_file = "demo1"
+            else:
+                # get the last number in the file name and increase it by 1
+                last_file = files[-1]
+                last_number = int(last_file.split("demo")[-1].split(".")[0])
+                new_file = "demo" + str(last_number + 1)
+            cv2.imwrite("app/images/" + new_file + ".png", frame)
             break
 
     # Release webcam and close all windows
     cap.release()
     cv2.destroyAllWindows()
 
-    # Return captured image
-    return frame
+    # return the image path
+    return "app/images/" + new_file + ".png"
 
 
 def image_to_latex(image_path):
@@ -50,6 +61,9 @@ def image_to_latex(image_path):
 
     command = "mpx convert " + image_path + " app/gen/" + new_file + ".tex"
     os.system(command)
+
+    # clear the screen
+    os.system("cls")
 
     file_path = "app/gen/" + new_file + ".tex.zip"
     # rename the file
@@ -163,20 +177,20 @@ def output(splitted_equations, mistake_line_numbers, marks):
 # main function
 if __name__ == "__main__":
     # step 1: open camera
-    # image = open_camera()
+    # image_path = open_camera()
 
-    # step 2: preview image
-    # cv2.imshow("Image Preview", image)
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
+    # step 2: check the image
+    # if image_path == "":
+    #     print("No image! Please try again!")
+    #     exit()
 
     # step 3: image to latex
     # image_path = "app\images\demo1.png"
     # image_path = "app\images\demo2.png"
     # image_path = "app\images\demo3.png"
     # image_path = "app\images\demo4.png"
-    image_path = "app\images\demo5.png"
-    # image_path = "app\images\demo6.png"
+    # image_path = "app\images\demo5.png"
+    image_path = "app\images\demo6.png"
 
     latex_str = image_to_latex(image_path)
     # latex_str = r"\left.\begin{array}{c}{x^{2}+5x+6=0}\\{x^{2}+2x+3x-6=0}\\{x(x+2)+3(x+2)=0}\\{(x+2)(x-3)=0}\end{array}\right."
