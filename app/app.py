@@ -60,14 +60,15 @@ def image_to_latex(image_path):
     # print("New file name:", new_file)
 
     command = "mpx convert " + image_path + " app/gen/" + new_file + ".tex"
-    os.system(command)
+    # os.system(command)
 
     # clear the screen
-    os.system("cls")
+    # os.system("cls")
+    new_file = 'extracted_latex_5'
 
-    file_path = "app/gen/" + new_file + ".tex.zip"
+    # file_path = "app/gen/" + new_file + ".tex.zip"
     # rename the file
-    os.rename(file_path, "app/gen/" + new_file + ".tex")
+    # os.rename(file_path, "app/gen/" + new_file + ".tex")
 
     # read the file
     with open("app/gen/" + new_file + ".tex", "r") as file:
@@ -155,20 +156,22 @@ def output(
 
         ax.text(
             0.5,
-            0.9 - i * 0.1,  # Adjust the vertical position for each line
+            0.9 - i * 0.3,  # Adjust the vertical position for each line
             f"${equation}$",
             usetex=True,
             fontsize=18,
             color=color,
+            horizontalalignment="center",
         )
 
     ax.text(
         0.5,
-        0.9 - (i + 2) * 0.1,
+        0.9 - (i + 1) * 0.3,
         f"Marks = {marks}",
         usetex=True,
         fontsize=20,
         color="green",
+        horizontalalignment="center",
     )
     ax.axis("off")
     plt.tight_layout()  # Ensure that the equations do not overlap
